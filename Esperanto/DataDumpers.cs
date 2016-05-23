@@ -250,7 +250,7 @@ namespace Esperanto
 
                                                 image.Save(imgPath);
 
-                                                html.AddAttribute(HtmlTextWriterAttribute.Src, imgFile);
+                                                html.AddAttribute(HtmlTextWriterAttribute.Src, imgFile.Replace('\\', '/'));
                                                 html.RenderBeginTag(HtmlTextWriterTag.Img);
                                                 html.RenderEndTag();
                                                 html.WriteBreak();
