@@ -42,6 +42,8 @@ namespace Esperanto
         {
             html.RenderBeginTag(HtmlTextWriterTag.Head);
             {
+                html.WriteLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>");
+
                 html.RenderBeginTag(HtmlTextWriterTag.Title);
                 {
                     html.Write(title);
@@ -225,6 +227,12 @@ namespace Esperanto
                                                 message = message.Replace(Environment.NewLine, "<br />");
                                                 message = message.Replace("[Highlight:On]", "<span style=\"color:#ff0000;\">");
                                                 message = message.Replace("[Highlight:Off]", "</span>");
+
+                                                int numSpanStart = CountSubstrings(message, "<span ");
+                                                int numSpanEnd = CountSubstrings(message, "</span>");
+                                                if (numSpanStart > numSpanEnd) message += "</span>";
+                                                else if (numSpanEnd > numSpanStart) message = "<span>" + message;
+
                                                 html.Write(message);
                                             }
                                             html.RenderEndTag();
@@ -251,6 +259,7 @@ namespace Esperanto
                                                 image.Save(imgPath);
 
                                                 html.AddAttribute(HtmlTextWriterAttribute.Src, imgFile.Replace('\\', '/'));
+                                                html.AddAttribute(HtmlTextWriterAttribute.Alt, Path.GetFileNameWithoutExtension(imgFile));
                                                 html.RenderBeginTag(HtmlTextWriterTag.Img);
                                                 html.RenderEndTag();
                                                 html.WriteBreak();
@@ -270,6 +279,18 @@ namespace Esperanto
                 html.RenderEndTag();
             }
             writer.Close();
+        }
+
+        private static int CountSubstrings(string str, string substr)
+        {
+            int numSubstr = 0;
+            int idx = 0;
+            while ((idx = str.IndexOf(substr, idx)) >= 0)
+            {
+                numSubstr++;
+                idx++;
+            }
+            return numSubstr;
         }
     }
 }
